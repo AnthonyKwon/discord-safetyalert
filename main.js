@@ -44,7 +44,7 @@ const firstChannel = guild => guild.channels.cache.filter(c => c.type === 'text'
 const sendMessage = msg => {
     client.guilds.cache.forEach(guild => {
         const curr_ch = firstChannel(guild);
-        curr_ch.send(`${msg}`);
+        curr_ch ? curr_ch.send(`${msg}`) : logger.log('warn', `[discord.js] Failed to send message to some channel!`);
         sleep(500);
     });
 }
@@ -60,6 +60,32 @@ client.on ('guildCreate', g => {
 });
 
 const replaceAll = (string, origin, replace) => string.split(origin).join(replace);
+
+const unescape = (string) => {
+    const targetList = ['&middot;', '&lt;', '&gt;'];
+    const replaceList = [String.fromCharCode(183), '<', '>'];
+    let newstr = string;
+    targetList.forEach(e => {
+        newstr = newstr.split(e).join(replaceList[targetList.indexOf(e)]);
+        return true;
+    });
+    return newstr;
+}
+
+/* parse and return SJ(Time/Location Information) */
+const SJparse = (SJ, parseType) => {
+    const SJsplit = SJ.split(' ');
+    if (parseType === 'date') {
+        SJsplit.pop();
+        return SJsplit.join(' ');
+    } else if (parseType === 'location') {
+        try {
+            return SJsplit[2].split('[')[1].replace(']', '');
+        } catch (err) {
+            logger.log('error', `[Axios] Failed to parse the data: ${err}\n${err.body}`);
+        }
+    }
+}
 
 const askAxios = async (url) => {
     try {
@@ -83,7 +109,7 @@ const axiosMain = async () => {
         logger.log('info',`[axios] Server responded with ${response.status}`);
 
         if (response.status !== 200) {
-            logger.error('error', `[axios] There was an error connecting to server:\n${response.body}`);
+            logger.log('error', `[axios] There was an error connecting to server:\n${response.body}`);
             await sleep(2*intv*1000);
             continue;
         }
@@ -110,12 +136,11 @@ const axiosMain = async () => {
             }
             lastStamp = response.data[0].SJ;
             for (let i = 0; i < stamp.length; i++) {
-                //sendMessage(`${message}\n**일시와 장소:** ${stamp[i]}\n**내용:** ${messages[i]}`);
-                sendMessage(alertMsg.format(stamp[i], messages[i]));
+                sendMessage(alertMsg.format(SJparse(stamp[i], 'date'), SJparse(stamp[i], 'location'), unescape(messages[i])));
                 await sleep(1000);
             }
         } catch (e) {
-            logger.error ('error', `[!|axios] ${e}`);
+            logger.log ('error', `[!|axios] ${e}`);
             process.exit(1);
     }
         await sleep(intv*1000);
