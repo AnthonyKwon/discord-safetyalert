@@ -1,7 +1,7 @@
 const axios = require('axios');
 const winston = require('winston');
 const Discord = require('discord.js');
-const token = require('./config/token.json');
+const { token } = require('./config/token.json');
 const { alertMsg, welcomeMsg } = require('./config/settings.json');
 const apiUrl = 'http://www.safekorea.go.kr/idsiSFK/neo/ext/json/disasterDataList/disasterDataList.json';
 const client = new Discord.Client();
