@@ -1,3 +1,4 @@
+config/token.json
 node_modules
 *.log
 safety-alert.service
