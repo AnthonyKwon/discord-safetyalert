@@ -1,6 +1,8 @@
 const axios = require('axios');
 const winston = require('winston');
 const Discord = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 const { token } = require('./config/token.json');
 const { alertMsg, welcomeMsg } = require('./config/settings.json');
 const apiUrl = 'http://www.safekorea.go.kr/idsiSFK/neo/ext/json/disasterDataList/disasterDataList.json';
@@ -11,8 +13,8 @@ const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
     transports: [
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'verbose.log', level: 'verbose' })
+        new winston.transports.File({ filename: path.join(__dirname, 'logs/error.log'), level: 'error' }),
+        new winston.transports.File({ filename: path.join(__dirname, 'logs/verbose.log'), level: 'verbose' })
     ]
 });
 
