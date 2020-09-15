@@ -1,17 +1,19 @@
 {
   "name": "safety-alert",
-  "version": "10.0.0",
+  "version": "0.4.4",
   "description": "A Discord Bot alerts safety alert.",
   "main": "main.js",
   "dependencies": {
     "axios": "^0.19.2",
+    "dateformat": "^3.0.3",
     "discord.js": "^12.2.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Anthony Kwon",
-  "license": "UNLICENSED"
+  "license": "MIT"
 }

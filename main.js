@@ -1,4 +1,5 @@
 const axios = require('axios');
+const dateFormat = require('dateformat');
 const winston = require('winston');
 const Discord = require('discord.js');
 const fs = require('fs');
@@ -11,7 +12,10 @@ let ready = false;
 
 const logger = winston.createLogger({
     level: 'info',
-    format: winston.format.json(),
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+    ),
     transports: [
         new winston.transports.File({ filename: path.join(__dirname, 'logs/error.log'), level: 'error' }),
         new winston.transports.File({ filename: path.join(__dirname, 'logs/verbose.log'), level: 'verbose' })
@@ -142,6 +146,13 @@ const axiosMain = async () => {
                 sendMessage(alertMsg.format(SJparse(stamp[i], 'date'), SJparse(stamp[i], 'location'), unescape(messages[i])));
                 await sleep(1000);
             }
+            client.user.setPresence({
+                status: 'online',
+                activity: {
+                    name: dateFormat(new Date(), "mm/dd HH:MM:ss") + ' UTC 기준',
+                    type: 'PLAYING'
+                }
+            });
         } catch (e) {
             logger.log ('error', `[!|axios] ${e}`);
             process.exit(1);
