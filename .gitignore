@@ -1,3 +1,4 @@
-config/token.json
+config/guilds.json
+config/settings.json
 logs
 node_modules
