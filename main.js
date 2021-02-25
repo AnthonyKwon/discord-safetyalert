@@ -32,18 +32,17 @@ const alertLoop = async () => {
             data = result;
 
             const message = [ string.stringFromId('safety.message.line1') ];
-            for (let element of data) {
-                const datetime = parser.readData(element.SJ, 'datetime');
-                const location = parser.readData(element.SJ, 'location');
-                const alertMessage = parser.readData(element.CONT, 'message');
+            for (let i = (data.length-1); i >= 0; i--) { // inverted order (of array)
+                const datetime = parser.readData(data[i].SJ, 'datetime');
+                const location = parser.readData(data[i].SJ, 'location');
+                const alertMessage = parser.readData(data[i].CONT, 'message');
 
                 message.push(string.stringFromId('safety.message.line2', datetime, location));
                 message.push(alertMessage);
             }
 
-            for ([guild, channel] of channelMap) {
+            for ([guild, channel] of channelMap)
                 app.sendMessage(channel, message);
-            }
         } catch(err) {
             logger.log('error', err);
         }
