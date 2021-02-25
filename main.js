@@ -30,19 +30,23 @@ const alertLoop = async () => {
             const result = await parser.parse(data);
             if (result === undefined) continue; // skip if data is not updated
             data = result;
-
+            
             const message = [ string.stringFromId('safety.message.line1') ];
+            // last parsed date/time
+            const lastParsed = new Date(parser.readData(data[0].SJ, 'datetime').split(/\//).join('-').split(' ').join('T') + '+09:00');
+            const embed = new Discord.MessageEmbed().setColor(14556188)
+                .setTimestamp(lastParsed)
+                .setFooter(string.stringFromId('safety.embed.last_update'));
+
             for (let i = (data.length-1); i >= 0; i--) { // inverted order (of array)
-                const datetime = parser.readData(data[i].SJ, 'datetime');
+                if (i > 25) i = 25; // bot can have max 25 field for embed
                 const location = parser.readData(data[i].SJ, 'location');
                 const alertMessage = parser.readData(data[i].CONT, 'message');
 
-                message.push(string.stringFromId('safety.message.line2', datetime, location));
-                message.push(alertMessage);
+                embed.addField(location, alertMessage);
             }
 
-            for ([guild, channel] of channelMap)
-                app.sendMessage(channel, message);
+            for ([guild, channel] of channelMap) app.sendMessage(channel, message, embed);
         } catch(err) {
             logger.log('error', err);
         }

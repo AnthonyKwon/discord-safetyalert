@@ -64,10 +64,15 @@ async function getChannel(guild, fallback=true) {
 }
 
 // Send message to specfieid channel (safe)
-function sendMessage(channel, message) {
+function sendMessage(channel, message, embed=undefined) {
     if (!channel.permissionsFor(channel.client.user).has('SEND_MESSAGES'))
         channel = searchChannel(channel.guild, true);
-    channel.send(message);
+    
+    // check if embed is available
+    if (embed)
+        channel.send(message, embed);
+    else
+        channel.send(message); 
 }
 
 module.exports = {

@@ -1,12 +1,16 @@
 {
   "name": "safety-alert",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A Discord Bot alerts safety alert.",
   "main": "main.js",
   "dependencies": {
     "axios": "^0.21.1",
     "discord.js": "^12.5.1",
     "winston": "^3.3.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnthonyKwon/discord-safetyalert.git"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
