@@ -1,6 +1,6 @@
 {
   "name": "safety-alert",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A Discord Bot alerts safety alert.",
   "main": "main.js",
   "dependencies": {
