@@ -33,12 +33,16 @@ function readData(data, dataType) {
             value = data.match(/^\d{4}\/\d{2}\/\d{2}\s\d{2}:\d{2}:\d{2}/);
             break;
         case 'location':
-            value = data.match(/.{4}\[.*\]$/);
+            value = data.match(/\[.*\]$/)[0];
+            value = value.slice(1, value.length - 1);
+            break;
         case 'message':
             const replaceTable = createReplaceTable(); // Get replace table
             value = data;
             for ([from, to] of replaceTable)
                 value = value.split(from).join(to); // replace strFrom(from replace) to strTo(to replace)
+                value = value.replace(/^\[.[^\[\]]*\]\s?/, '');
+            break;
     }
     return value;
 }
