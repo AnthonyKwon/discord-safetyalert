@@ -30,7 +30,7 @@ function readData(data, dataType) {
     let value = undefined;
     switch(dataType) {
         case 'datetime':
-            value = data.match(/^\d{4}\/\d{2}\/\d{2}\s\d{2}:\d{2}:\d{2}/);
+            value = data.match(/^\d{4}\/\d{2}\/\d{2}\s\d{2}:\d{2}:\d{2}/)[0];
             break;
         case 'location':
             value = data.match(/\[.*\]$/)[0];
