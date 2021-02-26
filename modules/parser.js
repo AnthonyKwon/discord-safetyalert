@@ -32,6 +32,12 @@ function readData(data, dataType) {
         case 'datetime':
             value = data.match(/^\d{4}\/\d{2}\/\d{2}\s\d{2}:\d{2}:\d{2}/)[0];
             break;
+        case 'isodatetime':
+            value = data.match(/^\d{4}\/\d{2}\/\d{2}\s\d{2}:\d{2}:\d{2}/)[0];
+            value = value.split(/\//).join('-'); // replace 'YYYY/MM/DD' to 'YYYY-MM-DD'
+            value = value.split(' ').join('T'); // replace ' ' to 'T' (add time identifier)
+            value = value + '+09:00'; // add timezone identifier
+            break;
         case 'location':
             value = data.match(/\[.*\]$/)[0];
             value = value.slice(1, value.length - 1);
@@ -49,27 +55,36 @@ function readData(data, dataType) {
 
 // Parse message data from api
 async function parse(data=undefined) {
-    logger.log('verbose', `[parser|axios] Connecting to ${apiUrl}...`);
+    logger.log('debug', `[parser|axios] Connecting to "${apiUrl}"...`);
     const response = await axios.get(apiUrl);
 
+    logger.log('debug', `[parser|axios] Server responded with ${response.status}.`);
     if (response.status !== 200)
         throw new NetworkException(response.status, 'CONNECTION_ERROR');
 
     // check if message data is updated
-    if (data && response.data[0].SJ === data[0].SJ)
+    if (data && response.data[0].SJ === data[0].SJ) {
+        logger.log('verbose', 'No message(s) received.');
         return undefined;
+    }
     
     // return updated message data
     let newData = []; // data to be returned
     for (let i = 0; i < response.data.length; i++) {
+        // escape loop when previously received data found
+        if (data && response.data[i].SJ === data[0].SJ)
+            break;
+        
         newData.push(new AlertMessage(
             response.data[i].SJ,
             response.data[i].CONT
         ));
 
-        if (!data || newData[i].SJ === data[0].SJ)
-            break;
+        logger.log('debug', `[parser] newData[${i}].SJ: ${newData[i].SJ}, newData[${i}].CONT: ${newData[i].CONT}`);
+        // escape loop if this is first call
+        if (!data) break;
     }
+    logger.log('info', `[parser] Received ${newData.length} new message(s).`);
     return newData;
 }
 
