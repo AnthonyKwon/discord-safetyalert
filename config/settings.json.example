@@ -1,4 +1,5 @@
 {
-    "locale": "ko-KR",
-    "token": "paste-your-token-here"
+    "token": "paste-your-token-here",
+    "interval": 60,
+    "locale": "ko-KR"
 }

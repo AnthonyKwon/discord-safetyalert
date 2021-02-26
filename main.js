@@ -22,7 +22,7 @@ client.on('guildCreate', async guild => {
 });
 
 const alertLoop = async () => {
-    let interval = 60;
+    let interval = config.interval;
     let data = undefined;
     while (true) {
         // wait before next parse (skip when data is undefined)
