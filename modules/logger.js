@@ -13,9 +13,10 @@ const logger = winston.createLogger({
 });
 
 function init() {
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'development') {
         logger.add(new winston.transports.Console({
             format: winston.format.simple(),
+            level: 'debug'
         }));
     }
 }
