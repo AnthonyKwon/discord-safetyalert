@@ -1,3 +1,13 @@
+class milli {
+    static convert(time) {
+        return Math.floor(time / 1000);
+    }
+
+    static get(time) {
+        return time * 1000;
+    }
+}
+
 /* https://stackoverflow.com/a/18405800 */
 function format() {
     var args = arguments;
@@ -15,6 +25,7 @@ function sleep(ms) {
 }
 
 module.exports = {
+    milli,
     format,
     sleep
 }

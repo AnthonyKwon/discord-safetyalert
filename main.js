@@ -21,12 +21,37 @@ client.on('guildCreate', async guild => {
     channelMap.set(guild, await app.getChannel(guild));
 });
 
+const randomDuration = (durationRange) => {
+    const min = durationRange.min <= durationRange.max ? durationRange.min : durationRange.max;
+    const max = durationRange.min <= durationRange.max ? durationRange.max : durationRange.min;
+    const range = max - min;
+    return Math.floor(Math.floor(Math.random() * range) + min) * 1000;
+}
+
+const waitWithActivity = async (duration) => {
+    let time = duration;
+    const interval = duration >= user.milli.get(30) ? user.milli.get(30) : duration;
+    while (time > 0) {
+        client.user.setActivity(string.stringFromId('safety.activity.waiting', timeToString(time)));
+        await user.sleep(interval);
+        time = time - interval;
+    }
+}
+
+const timeToString = (time) => {
+    if (user.milli.convert(time) >= 60)
+        return `${Math.floor(time / user.milli.get(60))}${string.stringFromId('safety.time.minute')}`;
+    else
+        return `${Math.floor(time / user.milli.get(1))}${string.stringFromId('safety.time.second')}`;
+}
+
 const alertLoop = async () => {
-    let interval = config.interval;
     let data = undefined;
     while (true) {
         // wait before next parse (skip when data is undefined)
-        if (data) await user.sleep(interval*1000);
+        const interval = randomDuration(config.interval);
+        logger.log('debug', `[loop] Resting for ${timeToString(interval)}...`);
+        await waitWithActivity(interval);
         try {
             const result = await parser.parse(data);
             if (result === undefined) continue; // skip if data is not updated

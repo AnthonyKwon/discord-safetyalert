@@ -1,7 +1,11 @@
 const axios = require('axios');
 const logger = require('./logger.js');
 
-const apiUrl = 'http://www.safekorea.go.kr/idsiSFK/neo/ext/json/disasterDataList/disasterDataList.json';
+const header = {
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+	'Referer': 'http://m.safekorea.go.kr/idsiSFK/neo/main_m/dis/disasterDataList.html'
+}
+const apiUrl = 'http://m.safekorea.go.kr/idsiSFK/neo/ext/json/disasterDataList/disasterDataList.json';
 
 class NetworkException {
     constructor(status, reason) {
@@ -55,7 +59,8 @@ function readData(data, dataType) {
 
 // Parse message data from api
 async function parse(data=undefined) {
-    logger.log('debug', `[parser|axios] Connecting to "${apiUrl}"...`);
+    const currDate = new Date();
+    logger.log('debug', `[parser|axios] Connecting to "${apiUrl}"?date=${Date.parse(currDate)}...`);
     const response = await axios.get(apiUrl);
 
     logger.log('debug', `[parser|axios] Server responded with ${response.status}.`);
